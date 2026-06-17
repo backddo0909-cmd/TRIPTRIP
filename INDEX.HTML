@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방구석 글로벌 트래블 매니저</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="hero-section">
+    <div class="hero-container">
+      <div class="tag-badge">💎 글로벌 트래블 매니저 v3</div>
+      <h1 class="hero-title">스마트 초정밀<br><span class="gradient-text">글로벌 여행 매칭 허브</span></h1>
+      <p class="hero-subtitle">실시간 환율, 중복 없는 랜덤 추천, 상세 예산 분석과 나만의 찜 리스트까지 완벽 지원</p>
+      
+      <div class="tab-menu-group">
+        <button id="tab-btn-widget" class="btn-tab active" onclick="switchTab('widget')">🛠️ 여행 필수 기능</button>
+        <button id="tab-btn-recommend" class="btn-tab" onclick="switchTab('recommend')">🎲 랜덤 여행지 추천 & 찜</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="tab-content-widget" class="tab-panel active-panel">
+    <section class="section-container">
+      <h2 class="zone-title">⚡ 여행 출발 전 필수 체크 기능</h2>
+      <div class="widget-grid">
+        
+        <div class="widget-card">
+          <h3>💵 전 세계 실시간 환율 계산기</h3>
+          <p class="widget-desc">API 연동 전 대륙 주요 통화 실시간 계산기</p>
+          <div class="widget-form">
+            <select id="currency-select" onchange="updateCurrency()">
+              <option value="USD">미국 (USD - 달러)</option>
+              <option value="JPY">일본 (JPY - 엔)</option>
+              <option value="EUR">유럽 연합 (EUR - 유로)</option>
+              <option value="GBP">영국 (GBP - 파운드)</option>
+              <option value="THB">태국 (THB - 바트)</option>
+              <option value="VND">베트남 (VND - 동)</option>
+              <option value="MXN">멕시코 (MXN - 페소)</option>
+              <option value="EGP">이집트 (EGP - 파운드)</option>
+            </select>
+            <input type="number" id="currency-input" value="1" oninput="convertCurrency()">
+            <div class="currency-result">➡️ <strong id="currency-output">1,400</strong> 원 (KRW)</div>
+          </div>
+        </div>
+
+        <div class="widget-card">
+          <h3>📋 상시 준비물 체크리스트</h3>
+          <p class="widget-desc">체크 항목은 브라우저에 자동 저장됩니다.</p>
+          <div class="checklist-box">
+            <label class="check-item"><input type="checkbox"> 여권, 비자 및 바우처</label>
+            <label class="check-item"><input type="checkbox"> 멀티 어댑터 플러그 & 충전기</label>
+            <label class="check-item"><input type="checkbox"> 상비약 및 개인 위생용품</label>
+            <label class="check-item"><input type="checkbox"> 트래블로그/와이어 카드 및 현지 화폐</label>
+          </div>
+        </div>
+
+        <div class="widget-card">
+          <h3>🔌 글로벌 전압/플러그 가이드</h3>
+          <p class="widget-desc">국가별 전압 규격 매칭 인프라</p>
+          <div class="widget-form">
+            <select id="plug-select" onchange="checkPlugInfo()">
+              <option value="japan">일본</option>
+              <option value="usa">미국 / 캐나다 / 멕시코</option>
+              <option value="france">프랑스 / 독일 / 유럽 대륙</option>
+              <option value="vietnam">베트남 / 태국</option>
+              <option value="uk">영국 / 싱가포르</option>
+            </select>
+            <div class="plug-result-box">
+              <p>🔌 모양: <strong id="plug-type">A타입 (11자형)</strong></p>
+              <p>⚡ 전압: <strong id="plug-volt">110V / 60Hz</strong></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <main id="tab-content-recommend" class="tab-panel">
+    <section class="section-container">
+      <h2 class="zone-title">🎲 대륙별 중복 없는 매칭 엔진</h2>
+      <p class="zone-subtitle">원하는 대륙을 선택하세요. 10개국을 모두 보기 전까지는 절대 중복되지 않습니다!</p>
+      
+      <div class="continent-btn-group">
+        <button class="btn-continent" onclick="pickRandomDestination('asia')">🌏 아시아 / 오세아니아</button>
+        <button class="btn-continent" onclick="pickRandomDestination('europe')">🇪🇺 유럽 대륙</button>
+        <button class="btn-continent" onclick="pickRandomDestination('america')">🇺🇸 아메리카 대륙</button>
+        <button class="btn-continent" onclick="pickRandomDestination('africa')">🦁 아프리카 / 중동</button>
+      </div>
+
+      <div id="recommend-result" class="recommend-card" style="display: none;">
+        
+        <div class="total-budget-hero">
+          <span class="budget-label">💰 3박 4일 권장 총예산</span>
+          <h2 id="rec-total-budget">0원</h2>
+        </div>
+
+        <div class="rec-card-header">
+          <span class="rec-badge" id="rec-continent">대륙</span>
+          <div class="rec-rating" id="rec-rating">⭐⭐⭐⭐⭐ 4.8</div>
+        </div>
+        
+        <h3 id="rec-country" class="rec-country-title">국가 이름</h3>
+        
+        <div class="rec-image-wrapper">
+          <img id="rec-image" src="" alt="여행지 이미지" onerror="handleImageError(this)">
+          <div class="img-fallback-text" id="img-fallback">🌄 이미지를 불러오는 중이거나 이미지가 없는 국가입니다.</div>
+        </div>
+
+        <p id="rec-desc" class="rec-main-desc">설명</p>
+        
+        <div class="rec-details-box">
+          <div class="detail-section">
+            <h4>📍 추천 여행 경로 (초정밀 코스)</h4>
+            <p id="rec-route" class="detail-text">-</p>
+          </div>
+          
+          <div class="detail-section">
+            <h4>🍕 현지 엄선 꼭 가야할 맛집</h4>
+            <p id="rec-food" class="detail-text">-</p>
+          </div>
+
+          <div class="detail-section">
+            <h4>💡 여행 마스터 중요 포인트</h4>
+            <p id="rec-point" class="detail-text">-</p>
+          </div>
+
+          <div class="detail-section budget-section">
+            <h4>📊 상세 예산 내역 분할 가이드</h4>
+            <div class="rec-budget-grid">
+              <div>✈️ 예상 왕복 항공비: <strong id="rec-cost-flight">-</strong></div>
+              <div>🏨 숙박비 (1박 기준): <strong id="rec-cost-stay">-</strong></div>
+              <div>🍔 일일 활동/식비 (1인): <strong id="rec-cost-daily">-</strong></div>
+            </div>
+          </div>
+          
+          <div class="control-action-group">
+            <button class="btn-wishlist-add" onclick="addToWishlist()">❤️ 이 여행지 찜하기</button>
+            <button class="btn-re-search" onclick="reSearchDestination()">다른 새로운 여행지 추천받기 🎲</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wishlist-zone">
+        <h3 class="wishlist-title">⭐️ 내가 찜한 여행지 보관함 (<span id="wishlist-count">0</span>)</h3>
+        <div id="wishlist-grid" class="wishlist-grid">
+          <p id="wishlist-empty-msg" class="empty-msg">아직 찜한 여행지가 없습니다. 마음에 드는 곳을 담아보세요!</p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
